@@ -1,0 +1,20 @@
+# Offline DPO baseline (Table 1): one DPO run on pairs sampled from the base policy over all
+# UltraFeedback prompts and ranked by the base reward model, same settings as Mutual-Taught.
+# IPO: --set dpo.loss_type=ipo (the paper does not report its IPO hyperparameters).
+run_dir: outputs/baselines/offline_dpo_llama3_8b
+iterations: 1
+
+models:
+  policy: meta-llama/Meta-Llama-3-8B-Instruct
+  reward: sfairXC/FsfairX-LLaMA3-RM-v0.1
+  attn_implementation: flash_attention_2
+
+data:
+  partition_order: [pm_1]
+  partition_size: null   # all prompts
+
+model_selection:
+  enabled: false
+
+mstep:
+  enabled: false

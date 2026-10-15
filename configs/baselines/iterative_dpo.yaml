@@ -1,0 +1,22 @@
+# Iterative DPO baseline (Table 1, Appendix A-B): the reward model is never updated, so all three
+# partitions are used for three policy iterations. Learning rate lowered to 5e-7 (Appendix B).
+run_dir: outputs/baselines/iterative_dpo_llama3_8b
+iterations: 3
+
+models:
+  policy: meta-llama/Meta-Llama-3-8B-Instruct
+  reward: sfairXC/FsfairX-LLaMA3-RM-v0.1
+  attn_implementation: flash_attention_2
+
+data:
+  partition_order: [pm_1, pm_2, pm_3]
+  partition_size: 20000
+
+dpo:
+  learning_rate: 5.0e-7
+
+model_selection:
+  enabled: false
+
+mstep:
+  enabled: false

@@ -1,0 +1,36 @@
+# End-to-end smoke test with small models, meant for 1-2 GPUs.
+# Exercises every stage: sampling, scoring, DPO with checkpoints, model selection,
+# pseudo-pair filtering and RM training. tau=0 so the run never halts.
+run_dir: outputs/smoke
+iterations: 2
+
+models:
+  policy: Qwen/Qwen2.5-0.5B-Instruct
+  reward: Skywork/Skywork-Reward-V2-Qwen3-0.6B
+
+data:
+  ms_size: 32
+  max_prompt_tokens: 512
+  partition_size: 64
+
+sampling:
+  num_samples: 4
+  max_new_tokens: 512
+  max_model_len: 4096
+  gpu_memory_utilization: 0.5
+
+dpo:
+  learning_rate: 5.0e-6
+  global_batch_size: 8
+  per_device_batch_size: 2
+  max_length: 1024
+  max_prompt_length: 512
+  save_steps: 3
+
+model_selection:
+  tau: 0.0
+
+reward_training:
+  global_batch_size: 8
+  per_device_batch_size: 2
+  max_length: 1024

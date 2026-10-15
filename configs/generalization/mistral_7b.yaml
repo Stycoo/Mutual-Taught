@@ -1,0 +1,21 @@
+# Generalization of the iterated reward models (Table 3): one DPO iteration of
+# Mistral-7B-Instruct-v0.2 on UltraFeedback, guided by r_0, r_1 or r_2 of the main run, e.g.
+#   mutual-taught run --config configs/generalization/mistral_7b.yaml \
+#     --set models.reward=outputs/mutual_taught/llama3_8b_fsfairx/iter2/reward run_dir=outputs/generalization/mistral_rm_iter2
+run_dir: outputs/generalization/mistral_7b_rm_base
+iterations: 1
+
+models:
+  policy: mistralai/Mistral-7B-Instruct-v0.2
+  reward: sfairXC/FsfairX-LLaMA3-RM-v0.1
+  attn_implementation: flash_attention_2
+
+data:
+  partition_order: [pm_1]
+  partition_size: null   # all prompts
+
+model_selection:
+  enabled: false
+
+mstep:
+  enabled: false

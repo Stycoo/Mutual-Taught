@@ -1,0 +1,32 @@
+#!/bin/bash
+# Run (or resume) one experiment. Submit from the repository root; queue and project are
+# site-specific:
+#   qsub -q <queue> -P <project> -v CONFIG=configs/smoke.yaml,NAME=smoke cluster/pbs/run.pbs
+# Optional variables:
+#   EXTRA_CONFIG=path.yaml   applied on top of CONFIG (use it for lists: qsub -v splits at commas)
+#   OVERRIDES="mstep.filter=dst;dpo.beta=0.1"   ';'-separated KEY=VALUE overrides
+#   RUN_TESTS=1              check imports/GPUs first (and run tests/ if present)
+# Re-submitting the same NAME resumes the run.
+
+#PBS -N mutual_taught
+#PBS -l select=1:ncpus=24:ngpus=2:mem=500gb
+#PBS -l walltime=24:00:00
+#PBS -j oe
+
+source "${PBS_O_WORKDIR:-.}/cluster/pbs/common.sh"
+set -eo pipefail
+activate_env
+fix_cuda_visible_devices
+echo "host=$(hostname) job=${PBS_JOBID:-none} CUDA_VISIBLE_DEVICES=${CUDA_VISIBLE_DEVICES:-}"
+nvidia-smi --query-gpu=name,memory.total --format=csv
+cd "$MT_ROOT"
+if [ "${RUN_TESTS:-0}" = 1 ]; then
+  python -c "import vllm, deepspeed, trl, torch; print('torch', torch.__version__, 'cuda', torch.cuda.is_available(), 'gpus', torch.cuda.device_count(), 'vllm', vllm.__version__, 'deepspeed', deepspeed.__version__, 'trl', trl.__version__)"
+  python -c "import flash_attn; print('flash_attn', flash_attn.__version__)" || echo "WARNING: flash_attn unavailable (only needed for attn_implementation=flash_attention_2)"
+  if [ -d tests ]; then python -m pytest -q; fi
+fi
+
+configs=("${CONFIG:?pass -v CONFIG=...}")
+if [ -n "${EXTRA_CONFIG:-}" ]; then configs+=("$EXTRA_CONFIG"); fi
+IFS=';' read -ra overrides <<< "${OVERRIDES:-}"
+mutual-taught run --config "${configs[@]}" --set run_dir="$MT_RUNS/${NAME:?pass -v NAME=...}" "${overrides[@]}"

@@ -1,0 +1,64 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mutual-taught"
+dynamic = ["version"]
+description = "Mutual-Taught: co-adapting policy and reward models (arXiv:2506.06292)"
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.10"
+authors = [
+  { name = "Tianyuan Shi" }, { name = "Canbin Huang" }, { name = "Fanqi Wan" }, { name = "Longguang Zhong" },
+  { name = "Ziyi Yang" }, { name = "Weizhou Shen" }, { name = "Xiaojun Quan" }, { name = "Ming Yan" },
+]
+keywords = ["rlhf", "dpo", "reward-model", "preference-optimization", "llm-alignment"]
+classifiers = [
+  "License :: OSI Approved :: Apache Software License",
+  "Programming Language :: Python :: 3",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+# Training stack. The exact versions were chosen to work together but have not been validated
+# end to end yet (see README "Status").
+dependencies = [
+  "pyyaml",
+  "torch==2.8.0",
+  "vllm==0.11.0",
+  "transformers==4.57.1",
+  "trl==0.24.0",
+  "deepspeed==0.17.6",
+  "accelerate>=1.4.0",
+  "datasets>=3.0.0,<5",  # 4.x is the tested range
+  "huggingface_hub<1.0",
+]
+
+[project.optional-dependencies]
+# flash-attn has no PyPI wheels for every platform; prefer a prebuilt wheel matching torch 2.8
+flash = ["flash-attn>=2.8.3"]
+dev = ["ruff>=0.6", "pre-commit"]
+
+[project.scripts]
+mutual-taught = "mutual_taught.cli:main"
+
+[project.urls]
+Paper = "https://arxiv.org/abs/2506.06292"
+Repository = "https://github.com/Stycoo/Mutual-Taught"
+
+[tool.setuptools.dynamic]
+version = { attr = "mutual_taught.__version__" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+mutual_taught = ["resources/*.json"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+src = ["src"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "SIM"]
+ignore = ["E501"]  # long lines are left to the formatter

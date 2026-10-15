@@ -1,0 +1,31 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite the paper below."
+title: "Mutual-Taught"
+repository-code: "https://github.com/Stycoo/Mutual-Taught"
+license: Apache-2.0
+authors:
+  - family-names: Shi
+    given-names: Tianyuan
+preferred-citation:
+  type: article
+  title: "Mutual-Taught for Co-adapting Policy and Reward Models"
+  journal: "arXiv preprint arXiv:2506.06292"
+  year: 2025
+  url: "https://arxiv.org/abs/2506.06292"
+  authors:
+    - family-names: Shi
+      given-names: Tianyuan
+    - family-names: Huang
+      given-names: Canbin
+    - family-names: Wan
+      given-names: Fanqi
+    - family-names: Zhong
+      given-names: Longguang
+    - family-names: Yang
+      given-names: Ziyi
+    - family-names: Shen
+      given-names: Weizhou
+    - family-names: Quan
+      given-names: Xiaojun
+    - family-names: Yan
+      given-names: Ming

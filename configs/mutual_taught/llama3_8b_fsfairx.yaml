@@ -1,0 +1,27 @@
+# Main experiment (Tables 1-2): Llama-3-8B-Instruct + FsfairX-LLaMA3-RM-v0.1 on UltraFeedback,
+# split into D_1 / D_R / D_2 with 20k prompts each, two Mutual-Taught iterations.
+# Values not listed here are the paper defaults in src/mutual_taught/config.py.
+run_dir: outputs/mutual_taught/llama3_8b_fsfairx
+iterations: 2
+
+models:
+  policy: meta-llama/Meta-Llama-3-8B-Instruct
+  reward: sfairXC/FsfairX-LLaMA3-RM-v0.1
+  attn_implementation: flash_attention_2
+
+data:
+  partition_order: [pm_1, rm, pm_2]
+  partition_size: 20000
+
+dpo:
+  beta: 0.01
+  learning_rate: 7.0e-7
+  global_batch_size: 128
+
+model_selection:
+  enabled: true
+  tau: 0.6
+
+mstep:
+  filter: lqf
+  rm_data: mixed
